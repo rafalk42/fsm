@@ -50,7 +50,9 @@ class ProcessExecutor:
 		print "All threads clear"
 	
 	def isRunning (self):
-		if self.proc.poll() is None:
+		a = self.proc.poll()
+		#print repr (a) + " : " + repr (self.proc.returncode)
+		if self.proc.returncode is None:
 			return True
 		else:
 			return False
@@ -105,6 +107,9 @@ class ProcessStdinWriter (threading.Thread):
 				self.stdin.write (line + "\n")
 			except Queue.Empty:
 				pass
+			except IOError:
+				print "I/O error on stdin write"
+				break;
 		
 		print "ProcessStdoutWriter finished"
 	

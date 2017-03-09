@@ -4,6 +4,7 @@ import sys
 import getopt
 import time
 import signal
+import Queue
 import Configuration
 import ProcessExecutor
 
@@ -73,11 +74,15 @@ def main (argv):
 	
 	stdinQueue.put ("/time")
 	while executor.isRunning() or not stdoutQueue.empty():
-		line = stdoutQueue.get (True)
-		#print repr (line)
-		#if len (line) > 0:
-		print "OUT: " + line
-
+		try:
+			line = stdoutQueue.get (True, 1)
+			#print repr (line)
+			#if len (line) > 0:
+			print "OUT: " + line
+		except Queue.Empty:
+			pass
+	
+	executor.wait()
 
 if __name__ == "__main__":
 	main (sys.argv)
