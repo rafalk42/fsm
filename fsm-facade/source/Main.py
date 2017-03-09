@@ -2,7 +2,9 @@
 
 import sys
 import getopt
+import time
 import Configuration
+import ProcessExecutor
 
 def usage (myself):
 	print "Usage " + myself + " [OPTIONS]"
@@ -36,6 +38,24 @@ def main (argv):
 		sys.exit(1)
 	
 	print "Using bin path: " + config.getBinPath()
+	
+	executor = ProcessExecutor.ProcessExecutor (config.getBinPath())
+	executor.start()
+	
+	time.sleep(0.5)
+	
+	lines = executor.readLines()
+	for line in lines:
+		print "OUT: " + line
+	executor.writeLine ("/time")
+	time.sleep (0.1)
+	executor.writeLine ("/quit")
+	while executor.isRunning():
+		lines = executor.readLines()
+		for line in lines:
+			if len (line) > 0:
+				print "OUT: " + line
+	executor.wait()
 
 if __name__ == "__main__":
 	main (sys.argv)

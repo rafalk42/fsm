@@ -4,7 +4,6 @@ class ConfigurationException(Exception):
 	pass
 
 class Configuration:
-	
 	def __init__(self, configPath):
 		config = ConfigParser.RawConfigParser()
 		loaded = config.read(configPath)
