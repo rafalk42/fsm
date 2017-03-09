@@ -51,7 +51,7 @@ def main (argv):
 	
 	print "Using bin path: " + config.getBinPath()
 	
-	executor = ProcessExecutor.ProcessExecutor (config.getBinPath())
+	executor = ProcessExecutor.ProcessExecutor (config.getBinPath(), config.getBinArgs())
 	executor.start()
 	stdoutQueue = executor.getStdoutQueue()
 	stdinQueue = executor.getStdinQueue()

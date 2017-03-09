@@ -6,16 +6,14 @@ import Queue
 
 
 class ProcessExecutor:
-	def __init__ (self, binPath):
+	def __init__ (self, binPath, binArgs):
 		self.binPath = binPath
+		self.binArgs = binArgs
 	
 	def start (self):
-		print "Executing..."
+		print "Executing " + self.binPath + "..."
 		try:
-			proc = subprocess.Popen (
-[self.binPath, "--server-settings", "../../../factorio/dedicated/server-settings.json", "--start-server", "../../../factorio/dedicated/save.zip"],
-stdin=subprocess.PIPE,
-stdout=subprocess.PIPE)
+			proc = subprocess.Popen ([self.binPath] + self.binArgs, stdin=subprocess.PIPE, stdout=subprocess.PIPE)
 			
 			self.stdoutLinesQueue = Queue.Queue()
 			self.stdinLinesQueue = Queue.Queue()
