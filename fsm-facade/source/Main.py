@@ -7,14 +7,15 @@ import signal
 import Queue
 import Configuration
 import ProcessExecutor
+import ServerProcess
+import ServerApi
+import HttpJsonApi
 
-executor = None
+
+api = None
 def signal_handler(signal, frame):
 	print "You pressed Ctrl+C!"
-	stdinQueue = executor.getStdinQueue()
-	stdinQueue.put ("/quit")
-	executor.wait()
-	print "Process quit"
+	api.quit()
 
 def usage (myself):
 	print "Usage " + myself + " [OPTIONS]"
@@ -22,8 +23,7 @@ def usage (myself):
 	print "  -c, --config <path>\t\tpath to configuration file"
 
 def main (argv):
-	global executor
-	signal.signal(signal.SIGINT, signal_handler)
+	global api
 	
 	try:
 		opts, args = getopt.getopt (argv[1:], "c:h", ["config=", "help"])
@@ -50,39 +50,25 @@ def main (argv):
 		print "Error: " + ex.args[0]
 		sys.exit(1)
 	
-	print "Using bin path: " + config.getBinPath()
+	print "Configuration:"
+	print "\tbinPath: " + config.getBinPath()
+	print "\tbinArgs: " + repr (config.getBinArgs())
+	
+	print "Registering signal handler"
+	signal.signal(signal.SIGINT, signal_handler)
 	
 	executor = ProcessExecutor.ProcessExecutor (config.getBinPath(), config.getBinArgs())
-	executor.start()
-	stdoutQueue = executor.getStdoutQueue()
-	stdinQueue = executor.getStdinQueue()
+	server = ServerProcess.ServerProcess (executor)
+	api = ServerApi.ServerApi (server)
+	httpJsonApi = HttpJsonApi.HttpJsonApi (api, "0.0.0.0", 1234)
+	httpJsonApi.start()
 	
-	time.sleep(0.5)
+	#signal.pause()
+	while not api.waitForQuit(1):
+		pass
+	httpJsonApi.stop()
 	
-	#lines = executor.readLines()
-	#for line in lines:
-	#	print "OUT: " + line
-	#executor.writeLine ("/time")
-	#time.sleep (0.1)
-	#executor.writeLine ("/quit")
-	#while executor.isRunning():
-	#	lines = executor.readLines()
-	#	for line in lines:
-	#		if len (line) > 0:
-	#			print "OUT: " + line
-	#executor.wait()
-	
-	stdinQueue.put ("/time")
-	while executor.isRunning() or not stdoutQueue.empty():
-		try:
-			line = stdoutQueue.get (True, 1)
-			#print repr (line)
-			#if len (line) > 0:
-			print "OUT: " + line
-		except Queue.Empty:
-			pass
-	
-	executor.wait()
+	print "Good bye!"
 
 if __name__ == "__main__":
 	main (sys.argv)

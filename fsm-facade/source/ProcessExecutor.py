@@ -29,7 +29,11 @@ class ProcessExecutor:
 		except OSError as ex:
 			print "Error executing binary"
 			print repr (ex)
+			return False
+		
 		print "Process has been started"
+		
+		return True
 	
 	def getStdoutQueue (self):
 		return self.stdoutLinesQueue
@@ -38,8 +42,11 @@ class ProcessExecutor:
 		return self.stdinLinesQueue
 	
 	def wait (self):
+		print "Waiting for process to stop"
 		self.proc.wait()
-		
+		print "Process has stopped"
+	
+	def stop (self):
 		print "Notifying threads to stop"
 		self.readerThread.stop()
 		self.writerThread.stop()
