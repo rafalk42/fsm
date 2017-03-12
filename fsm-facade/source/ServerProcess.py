@@ -47,6 +47,13 @@ class ServerProcess:
 		print "All quit"
 		
 		self.isRunning = False
+	
+	def chatSend (self, text):
+		if text[0] == "/":
+			print "Refusing to send command: %s" % text
+			return
+		
+		self.stdinQueue.put (text)
 
 class StdoutProcessor (threading.Thread):
 	def __init__ (self, queue):

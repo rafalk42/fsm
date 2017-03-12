@@ -27,3 +27,6 @@ class ServerApi:
 	
 	def serverStop (self):
 		self.server.serverStop()
+	
+	def chatSend (self, text):
+		self.server.chatSend (text)
