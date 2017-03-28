@@ -14,9 +14,22 @@ class Configuration:
 		self.binPath = config.get ("main", "binPath")
 		binArgs = config.get ("main", "binArgs")
 		self.binArgs = binArgs.split (" ")
+		
+		self.webAddress = config.get ("web", "address")
+		self.webPort = int (config.get ("web", "port"))
+		self.webStaticFilesRootPath = config.get ("web", "staticFilesRootPath")
 	
 	def getBinPath (self):
 		return self.binPath
 	
 	def getBinArgs (self):
 		return self.binArgs
+	
+	def getWebAddress (self):
+		return self.webAddress
+	
+	def getWebPort (self):
+		return self.webPort
+	
+	def getWebStaticFilesRootPath (self):
+		return self.webStaticFilesRootPath

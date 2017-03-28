@@ -9,7 +9,7 @@ import Configuration
 import ProcessExecutor
 import ServerProcess
 import ServerApi
-import HttpJsonApi
+import HttpServer
 
 
 api = None
@@ -53,6 +53,9 @@ def main (argv):
 	print "Configuration:"
 	print "\tbinPath: " + config.getBinPath()
 	print "\tbinArgs: " + repr (config.getBinArgs())
+	print "\twebAddress: " + config.getWebAddress()
+	print "\twebPort: %d" % (config.getWebPort())
+	print "\twebStaticFilesRootPath: " + config.getWebStaticFilesRootPath()
 	
 	print "Registering signal handler"
 	signal.signal(signal.SIGINT, signal_handler)
@@ -60,13 +63,13 @@ def main (argv):
 	executor = ProcessExecutor.ProcessExecutor (config.getBinPath(), config.getBinArgs())
 	server = ServerProcess.ServerProcess (executor)
 	api = ServerApi.ServerApi (server)
-	httpJsonApi = HttpJsonApi.HttpJsonApi (api, "0.0.0.0", 1234)
-	httpJsonApi.start()
+	httpServer = HttpServer.HttpServer (api, config.getWebAddress(), config.getWebPort(), config.getWebStaticFilesRootPath())
+	httpServer.start()
 	
 	#signal.pause()
 	while not api.waitForQuit(1):
 		pass
-	httpJsonApi.stop()
+	httpServer.stop()
 	
 	print "Good bye!"
 
