@@ -3,3 +3,15 @@ body
 	font-family: "Helvetica";
 	line-height: 0.75em;
 }
+
+.menu
+{
+	clear: both;
+}
+
+li.menu-item
+{
+	list-style-type: none;
+	float: left;
+}
+
